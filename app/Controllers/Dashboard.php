@@ -1,24 +1,31 @@
 <?php
+
 namespace App\Controllers;
 
 use App\Models\EnrollmentModel;
+use App\Models\CourseModel;
 
 class Dashboard extends BaseController
 {
     public function index()
     {
-        if (!session()->get('logged_in')) {
-            return redirect()->to('/login');
+        $userId = session()->get('user_id');
+        $enrollmentModel = new EnrollmentModel();
+        $courseModel = new CourseModel();
+
+        $enrollments = $enrollmentModel->where('user_id', $userId)->findAll();
+
+        $enrolledCourses = [];
+        foreach ($enrollments as $enroll) {
+            $course = $courseModel->find($enroll['course_id']);
+            if ($course) {
+                $course['enrolled_at'] = $enroll['enrolled_at'];
+                $enrolledCourses[] = $course;
+            }
         }
 
-        $enrollmentModel = new EnrollmentModel();
-        // Mengambil data kursus yang di-enroll oleh student ID yang sedang login
-        $enrolledCourses = $enrollmentModel->getEnrolledCoursesByUserId(session()->get('user_id'));
-
         return view('dashboard/dashboard_index', [
-            'username' => session()->get('username'),
-            'role'     => session()->get('role'),
-            'enrolledCourses' => $enrolledCourses // Mengirim data ke view
+            'enrolledCourses' => $enrolledCourses
         ]);
     }
 }

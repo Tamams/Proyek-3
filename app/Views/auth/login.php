@@ -12,7 +12,14 @@
     <form method="post" action="/auth/doLogin">
         <div class="mb-3">
             <label>Username</label>
-            <input type="text" name="username" class="form-control" required>
+            <input type="text" name="username"
+                class="form-control <?= session()->getFlashdata('error_login') ? 'is-invalid' : '' ?>"
+                value="<?= old('username') ?>" required>
+            <?php if (session()->getFlashdata('error_login')): ?>
+                <div class="invalid-feedback">
+                    <?= session()->getFlashdata('error_login') ?>
+                </div>
+            <?php endif; ?>
         </div>
         <div class="mb-3">
             <label>Password</label>

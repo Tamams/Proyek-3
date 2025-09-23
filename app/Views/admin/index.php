@@ -12,7 +12,8 @@
                 <span class="navbar-text text-white">
                     Halo, <b><?= session()->get('full_name') ?: session()->get('username') ?></b>
                 </span>
-                <a href="<?= site_url('logout') ?>" class="btn btn-outline-light btn-sm">Logout</a>
+                <a href="<?= site_url('logout') ?>" class="btn btn-outline-light btn-sm"
+                   onclick="return confirm('Yakin ingin logout?')">Logout</a>
             </div>
         </div>
     </nav>
@@ -41,6 +42,45 @@
                 <button type="submit" class="btn btn-success">Tambah</button>
             </form>
         </div>
+        <div class="col-md-6">
+            <h3>Tambah Mahasiswa</h3>
+            <form method="post" action="<?= site_url('admin/addStudent') ?>">
+                <div class="mb-3">
+                    <label for="username" class="form-label">Username</label>
+                    <input type="text" name="username" id="username"
+                        class="form-control <?= session()->getFlashdata('error_username') ? 'is-invalid' : '' ?>"
+                        value="<?= old('username') ?>" required>
+                    <?php if (session()->getFlashdata('error_username')): ?>
+                        <div class="invalid-feedback">
+                            <?= session()->getFlashdata('error_username') ?>
+                        </div>
+                    <?php endif; ?>
+                </div>
+                <div class="mb-3">
+                    <label for="full_name" class="form-label">Nama Lengkap</label>
+                    <input type="text" name="full_name" id="full_name"
+                        class="form-control <?= session()->getFlashdata('error_full_name') ? 'is-invalid' : '' ?>"
+                        value="<?= old('full_name') ?>" required>
+                    <?php if (session()->getFlashdata('error_full_name')): ?>
+                        <div class="invalid-feedback">
+                            <?= session()->getFlashdata('error_full_name') ?>
+                        </div>
+                    <?php endif; ?>
+                </div>
+                <div class="mb-3">
+                    <label for="password" class="form-label">Password</label>
+                    <input type="password" name="password" id="password"
+                        class="form-control <?= session()->getFlashdata('error_password') ? 'is-invalid' : '' ?>"
+                        required>
+                    <?php if (session()->getFlashdata('error_password')): ?>
+                        <div class="invalid-feedback">
+                            <?= session()->getFlashdata('error_password') ?>
+                        </div>
+                    <?php endif; ?>
+                </div>
+                <button type="submit" class="btn btn-primary">Tambah Mahasiswa</button>
+            </form>
+        </div>
     </div>
     
     <hr class="my-5">
@@ -67,11 +107,9 @@
                                 <td><?= $i + 1 ?></td>
                                 <td><?= esc($c['course_name']); ?></td>
                                 <td>
-                                    <a href="<?= site_url('admin/deleteCourse/'.$c['id']) ?>" 
-                                       onclick="return confirm('Apakah Anda yakin ingin menghapus course ini?')"
-                                       class="btn btn-danger btn-sm">
-                                        Hapus
-                                    </a>
+                                    <a href="<?= site_url('admin/deleteCourse/'.$c['id']) ?>"
+                                       class="btn btn-danger btn-sm"
+                                       onclick="return confirm('Yakin ingin menghapus course ini?')">Hapus</a>
                                 </td>
                             </tr>
                         <?php endforeach; ?>

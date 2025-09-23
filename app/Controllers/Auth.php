@@ -34,9 +34,9 @@ class Auth extends BaseController
             } else {
                 return redirect()->to('/dashboard');
             }
-        } else {
-            return redirect()->back()->with('error', 'Username atau password salah');
-        }
+        } 
+        session()->setFlashdata('error_login', 'Username atau password salah');
+        return redirect()->back()->withInput();
     }
 
     public function logout()

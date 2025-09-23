@@ -24,6 +24,11 @@ class Admin extends BaseController
 
     public function addCourse()
     {
+        $courseName = $this->request->getPost('course_name');
+        if (!$courseName) {
+            session()->setFlashdata('error_course_name', 'Nama course wajib diisi');
+            return redirect()->back()->withInput();
+        }
         $courseModel = new CourseModel();
         $courseModel->insert([
             'course_name' => $this->request->getPost('course_name'),
@@ -44,6 +49,44 @@ class Admin extends BaseController
         $courseModel->delete($courseId);
 
         return redirect()->to('/admin')->with('message', 'Course berhasil dihapus!');
+    }
+
+    public function addStudent()
+    {
+        $username = $this->request->getPost('username');
+        $fullName = $this->request->getPost('full_name');
+        $password = $this->request->getPost('password');
+
+        // Validasi sederhana
+        if (!$username) {
+            session()->setFlashdata('error_username', 'Username wajib diisi');
+            return redirect()->back()->withInput();
+        }
+        if (!$fullName) {
+            session()->setFlashdata('error_full_name', 'Nama lengkap wajib diisi');
+            return redirect()->back()->withInput();
+        }
+        if (!$password) {
+            session()->setFlashdata('error_password', 'Password wajib diisi');
+            return redirect()->back()->withInput();
+        }
+
+        $userModel = new \App\Models\UserModel();
+        // Cek duplikasi username
+        if ($userModel->where('username', $username)->countAllResults() > 0) {
+            session()->setFlashdata('error_username', 'Username sudah digunakan');
+            return redirect()->back()->withInput();
+        }
+
+        $userModel->insert([
+            'username' => $username,
+            'full_name' => $fullName,
+            'password_hash' => password_hash($password, PASSWORD_DEFAULT),
+            'role' => 'student'
+        ]);
+
+        session()->setFlashdata('success', 'Mahasiswa berhasil ditambahkan');
+        return redirect()->back();
     }
 
     public function deleteStudent($userId)

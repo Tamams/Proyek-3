@@ -1,3 +1,4 @@
+<?php $activeMenu = 'courses'; ?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -13,12 +14,12 @@
   <div class="container-fluid">
     <a class="navbar-brand" href="#">MyApp</a>
     <div class="collapse navbar-collapse">
-      <ul class="navbar-nav me-auto">
+      <ul class="navbar-nav me-auto mb-2 mb-lg-0">
         <li class="nav-item">
-          <a class="nav-link" href="<?= site_url('dashboard') ?>">Dashboard</a>
+          <a class="nav-link<?= $activeMenu == 'dashboard' ? ' active' : '' ?>" href="<?= site_url('dashboard') ?>">Dashboard</a>
         </li>
         <li class="nav-item">
-          <a class="nav-link active" href="<?= site_url('courses') ?>">Courses</a>
+          <a class="nav-link<?= $activeMenu == 'courses' ? ' active' : '' ?>" href="<?= site_url('courses') ?>">Courses</a>
         </li>
       </ul>
     </div>
@@ -26,51 +27,36 @@
       <span class="navbar-text text-white">
         Halo, <b><?= session()->get('full_name') ?: session()->get('username') ?></b>
       </span>
-      <a href="<?= site_url('logout') ?>" class="btn btn-outline-light btn-sm">Logout</a>
+      <a href="<?= site_url('logout') ?>" class="btn btn-outline-light btn-sm"
+         onclick="return confirm('Yakin ingin logout?')">Logout</a>
     </div>
   </div>
 </nav>
 
-<!-- Konten Courses -->
+<!-- Konten utama -->
 <div class="container mt-4">
-    <h2>Daftar Courses 📚</h2>
-
-    <?php if (session()->getFlashdata('message')): ?>
-        <div class="alert alert-success"><?= session()->getFlashdata('message') ?></div>
-    <?php endif; ?>
-
-    <table class="table table-striped table-bordered mt-3">
+    <h1 class="mb-4">Daftar Courses 📚</h1>
+    <div id="alert-area"></div>
+    <table class="table table-bordered" id="courses-table">
         <thead class="table-dark">
             <tr>
                 <th>#</th>
                 <th>Nama Course</th>
+                <th>Deskripsi</th>
                 <th>Aksi</th>
             </tr>
         </thead>
         <tbody>
-            <?php if (!empty($courses)): ?>
-                <?php foreach ($courses as $i => $course): ?>
-                    <tr>
-                        <td><?= $i + 1 ?></td>
-                        <td><?= esc($course['course_name']); ?></td>
-                        <td>
-                            <a href="<?= site_url('courses/enroll/'.$course['id']); ?>" class="btn btn-success btn-sm">
-                                Enroll
-                            </a>
-                        </td>
-                    </tr>
-                <?php endforeach; ?>
-            <?php else: ?>
-                <tr>
-                    <td colspan="3" class="text-center">Belum ada course tersedia</td>
-                </tr>
-            <?php endif; ?>
+            <!-- Akan diisi otomatis oleh JavaScript -->
         </tbody>
     </table>
-
-    <a href="<?= site_url('dashboard') ?>" class="btn btn-secondary">Kembali</a>
 </div>
 
+<script>
+    const BASE_URL = "<?= rtrim(base_url(), '/') ?>";
+    const USER_ID = "<?= session()->get('user_id') ?>";
+</script>
+<script src="<?= base_url('js/courses.js') ?>"></script>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>
